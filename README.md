@@ -39,3 +39,13 @@ You can load data from the gateway by specifying a Hyperdrive key and a path to 
 
 The specific HTTP verbs and headers that are supported can be found in [hypercore-fetch](https://github.com/RangerMauve/hypercore-fetch).
 Basically you can replace the `hyper://` in a URL with `http://localhost:4973/hyper/` and it'll work.
+
+## Building native binaries
+
+Hyper-gateway uses the [pkg](https://github.com/vercel/pkg) module to compile the node.js code into a single binary that you can distribute on a server.
+
+- `git clone git@github.com:RangerMauve/hyper-gateway.git`
+- Install node.js if you haven't already
+- `npm install`
+- `npm run build`
+- Look in the `dist` folder for the platform you want.
