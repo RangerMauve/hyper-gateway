@@ -6,7 +6,7 @@ const args = require('yargs')
 const OUTPUT_MAP = {
   linux: './dist/hyper-gateway-linux',
   darwin: './dist/hyper-gateway-macos',
-  win32: './dist/hyper-gateway-windows'
+  win32: './dist/hyper-gateway-windows.exe'
 }
 
 const packageData = require('./package.json')
