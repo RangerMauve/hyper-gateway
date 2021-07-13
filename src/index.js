@@ -1,10 +1,13 @@
-const fastifyHyperdrive = require('fastify-hyperdrive')
-const makeFastify = require('fastify')
+const http = require('http')
 const SDK = require('hyper-sdk')
+const makeFetch = require('hypercore-fetch')
+const { Readable } = require('stream')
 
 module.exports = {
   create
 }
+
+const log = (...args) => console.log(...args)
 
 async function create ({
   port,
@@ -18,19 +21,15 @@ async function create ({
   p2pPort,
   storageLocation
 } = {}) {
-  const fastify = makeFastify({
-    ...serverOpts,
-    logger: !silent
-  })
+  const debug = silent ? require('debug')('hyper-gateway') : log
 
-  fastify.log.info({
+  debug('Initializing server %O', {
     port,
     p2pPort,
     writable,
     storageLocation,
-    persist,
-    silent
-  }, 'Initializing server')
+    persist
+  })
 
   const sdk = await SDK({
     applicationName: 'hyper-gateway',
@@ -45,20 +44,60 @@ async function create ({
 
   const { Hyperdrive } = sdk
 
-  const hyperdriveRoute = fastifyHyperdrive(Hyperdrive, { writable })
+  const fetch = makeFetch({ Hyperdrive, writable })
 
-  fastify.all('/hyper/:key/*path', hyperdriveRoute)
+  const server = http.createServer(async (req, res) => {
+    try {
+      const { method, url, headers } = req
+      debug('Request: %O', { method, url, headers })
 
-  await fastify.listen(port)
+      // TODO: Show something at the root?
+      if (!url.startsWith('/hyper/')) {
+        res.writeHead(404)
+        res.end('Not Found')
+        return
+      }
+
+      const finalURL = 'hyper://' + url.slice('/hyper/'.length)
+
+      const response = await fetch(finalURL, {
+        method,
+        headers,
+        body: req
+      })
+
+      const responseHeaders = {}
+      for (const [name, value] of response.headers) {
+        responseHeaders[name] = value
+      }
+      const { status } = response
+
+      debug('Requested: %O', { method, url: finalURL, status, responseHeaders })
+
+      res.writeHead(response.status, responseHeaders)
+
+      Readable.from(response.body).pipe(res)
+    } catch (e) {
+      debug(e)
+      res.writeHead(500, { 'Content-Type': 'text/plain' })
+      res.end(e.message)
+    }
+  })
+
+  await new Promise((resolve, reject) => {
+    server.listen(port, (err) => {
+      if (err) reject(err)
+      else resolve()
+    })
+  })
 
   async function close () {
-    fastify.log.info('Closing server')
     await Promise.all([
-      fastify.close(),
+      server.close(),
       sdk.close()
     ])
-    fastify.log.info('Closed')
+    debug('closed')
   }
 
-  return { sdk, fastify, close }
+  return { sdk, server, close }
 }
