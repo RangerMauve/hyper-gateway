@@ -63,7 +63,7 @@
   "dependencies": {
     "env-paths": "^2.2.1",
     "hyper-sdk": "^3.0.7",
-    "hypercore-fetch": "^8.0.0",
+    "hypercore-fetch": "^8.1.0",
     "yargs": "^17.0.1"
   },
   "devDependencies": {
