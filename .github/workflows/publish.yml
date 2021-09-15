@@ -17,16 +17,10 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            artifact_name: hyperdrive-gateway-linux-$tag
-            asset_name: dist/hyperdrive-gateway-linux
             to_run: npm run build-linux
           - os: windows-latest
-            artifact_name: hyperdrive-gateway-windows-$tag.exe
-            asset_name: dist/hyperdrive-gateway-windows.exe
             to_run: npm run build-windows
           - os: macos-latest
-            artifact_name: hyperdrive-gateway-mac-$tag
-            asset_name: dist/hyperdrive-gateway-mac
             to_run: npm run build-mac
 
     steps:
@@ -43,6 +37,6 @@ jobs:
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: target/release/${{ matrix.artifact_name }}
-        asset_name: ${{ matrix.asset_name }}
+        file: dist/**
+        file_glob: true
         tag: ${{ github.ref }}
