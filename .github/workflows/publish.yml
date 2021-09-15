@@ -35,6 +35,8 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: 14
+    - name: Install dependencies
+      run: npm install
     - name: Build
       run: ${{ matrix.to_run }}
     - name: Upload binaries to release
