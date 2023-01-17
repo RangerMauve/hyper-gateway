@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         node: [ '18' ]
-    name: Node ${{ matrix.node }} sample
+    name: Test on Node ${{ matrix.node }}
     steps:
       - uses: actions/checkout@v2
       - name: Setup node
