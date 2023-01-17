@@ -1,6 +1,9 @@
 #!/usr/bin/env node
-const yargs = require('yargs')
-const envPaths = require('env-paths')
+import Yargs from 'yargs'
+import envPaths from 'env-paths'
+import { create } from './index.js'
+
+const yargs = Yargs(process.argv.slice(2))
 
 function runOptions (yargs) {
   return yargs
@@ -12,10 +15,6 @@ function runOptions (yargs) {
     .option('port', {
       describe: 'The port to run the server on (HYPE)',
       default: 4973
-    })
-    .option('p2p-port', {
-      describe: 'The port to run the p2p network on (HYPR)',
-      default: 4977
     })
     .option('persist', {
       describe: 'Whether data should be persisted to disk',
@@ -34,9 +33,16 @@ function runOptions (yargs) {
 }
 
 async function runServer (args) {
-  const { create } = require('./')
+  const { writable, port, persist, storageLocation, silent } = args
 
-  const { close } = await create(args)
+  const storage = persist ? storageLocation : false
+
+  const { close } = await create({
+    writable,
+    port,
+    silent,
+    storage
+  })
 
   process.on('SIGINT', async () => {
     try {

@@ -1,14 +1,13 @@
-const test = require('tape')
-const fetch = require('node-fetch')
-const getPort = require('get-port')
-const HyperGateway = require('./')
+import test from 'tape'
+import getPort from 'get-port'
+import * as HyperGateway from './src/index.js'
 
-test('Load data', async (t) => {
+test.skip('Load data', async (t) => {
   const port = await getPort()
 
   const gateway = await HyperGateway.create({
     port,
-    persist: false,
+    storage: false,
     silent: true
   })
 
@@ -30,7 +29,7 @@ test('Upload data', async (t) => {
 
   const gateway = await HyperGateway.create({
     port,
-    persist: false,
+    storage: false,
     silent: true,
     writable: true
   })

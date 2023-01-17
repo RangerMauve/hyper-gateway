@@ -1,50 +1,43 @@
-const http = require('http')
-const SDK = require('hyper-sdk')
-const makeFetch = require('hypercore-fetch')
-const { Readable } = require('stream')
-
-module.exports = {
-  create
-}
+import http from 'http'
+import * as SDK from 'hyper-sdk'
+import makeHypercoreFetch from 'hypercore-fetch'
+import { Readable } from 'node:stream'
+import { pipeline } from 'node:stream/promises'
+import makeDebug from 'debug'
 
 const log = (...args) => console.log(...args)
 
-async function create ({
+const DEFAULT_STORAGE = 'hyper-gateway'
+
+const EPHEMERAL_METHODS = [
+  'get',
+  'head',
+  'options'
+]
+
+export async function create ({
   port,
   serverOpts = {
     logger: true
   },
   hyperOpts = {},
   writable = false,
-  persist = true,
   silent = false,
-  p2pPort,
-  storageLocation
+  storage = DEFAULT_STORAGE
 } = {}) {
-  const debug = silent ? require('debug')('hyper-gateway') : log
+  const debug = silent ? makeDebug('hyper-gateway') : log
 
   debug('Initializing server %O', {
     port,
-    p2pPort,
-    writable,
-    storageLocation,
-    persist
+    writable
   })
 
-  const sdk = await SDK({
-    applicationName: 'hyper-gateway',
-    storage: storageLocation,
-    persist,
-    swarmOpts: {
-      ephemeral: false,
-      preferredPort: p2pPort
-    },
+  const sdk = await SDK.create({
+    storage,
     ...hyperOpts
   })
 
-  const { Hyperdrive } = sdk
-
-  const fetch = makeFetch({ Hyperdrive, writable })
+  const fetch = await makeHypercoreFetch({ sdk, writable })
 
   const server = http.createServer(async (req, res) => {
     try {
@@ -60,10 +53,14 @@ async function create ({
 
       const finalURL = 'hyper://' + url.slice('/hyper/'.length)
 
+      const isEphemeral = EPHEMERAL_METHODS.includes(method.toLowerCase())
+
+      const body = isEphemeral ? null : Readable.from(req)
+
       const response = await fetch(finalURL, {
         method,
         headers,
-        body: req
+        body
       })
 
       const responseHeaders = {}
@@ -76,7 +73,10 @@ async function create ({
 
       res.writeHead(response.status, responseHeaders)
 
-      Readable.from(response.body).pipe(res)
+      await pipeline(
+        Readable.from(response.body || [], { objectMode: false }),
+        res
+      )
     } catch (e) {
       debug(e)
       res.writeHead(500, { 'Content-Type': 'text/plain' })
