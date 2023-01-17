@@ -1,6 +1,15 @@
-const args = require('yargs')
+#!/usr/bin/env node
+import Yargs from 'yargs'
+import { execSync } from 'node:child_process'
+
+const yargs = Yargs(process.argv.slice(2))
+const args = yargs
   .option('target')
   .demandOption('target')
+  .option('install', {
+    type: 'boolean',
+    default: true
+  })
   .parse(process.argv.slice(2))
 
 const OUTPUT_MAP = {
@@ -9,37 +18,43 @@ const OUTPUT_MAP = {
   win32: './dist/hyper-gateway-windows.exe'
 }
 
-const packageData = require('./package.json')
+const CONFIG_MAP = {
+  linux: './linux.json',
+  darwin: './darwin.json',
+  win32: './win32.json'
+}
 
 const { target } = args
 const targetKey = `pkg-${target}`
 
-const pkgConfig = packageData[targetKey]
+const configPath = CONFIG_MAP[target]
 
-if (!pkgConfig) throw new Error(`Invalid target, must supply ${targetKey} in the package.json`)
+if (!configPath) throw new Error(`Invalid target, must supply ${targetKey} in the package.json`)
 
-packageData.pkg = pkgConfig
+if (args.install) {
+  console.log('Rebuilding dependencies for', target)
 
-console.log('Preparing package.json')
-
-require('fs').writeFileSync('./package.json', JSON.stringify(packageData, null, '  '))
-
-console.log('Rebuilding dependencies for', target)
-
-require('child_process').execSync(`npm i --target_arch=x64 --target_platform=${target}`, { stdio: ['pipe', 'pipe', 'pipe'] })
-
-const outputName = OUTPUT_MAP[target] || pkgConfig.output
+  execSync(`npm i --target_arch=x64 --target_platform=${target}`, { stdio: ['pipe', 'pipe', 'pipe'] })
+} else {
+  console.log('skipping rebuild')
+}
+const outputName = OUTPUT_MAP[target]
 
 if (!outputName) throw new Error('Must specify appropriate output name in config')
 
 console.log('Compiling, output to', outputName)
 
-require('child_process').execSync(`pkg ./ --output ${outputName} --compress Brotli`, { stdio: ['pipe', 'pipe', 'pipe'] })
+const pkgArgs = [
+  './dist/bundle.js',
+  `--config ${configPath}`,
+  '--public',
+  '--no-bytecode',
+  `--output ${outputName}`,
+  '--compress Brotli'
+].join(' ')
 
-console.log('Cleaning package.json')
+console.log('Args: ', pkgArgs)
 
-delete packageData.pkg
-
-require('fs').writeFileSync('./package.json', JSON.stringify(packageData, null, '  '))
+execSync(`pkg  ${pkgArgs}`, { stdio: ['pipe', 'pipe', 'pipe'] })
 
 console.log('Done!')

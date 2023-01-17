@@ -1,4 +1,5 @@
 # hyper-gateway
+
 A gateway for talking to hypercore-protocol using the same URL structures as [Agregore](https://agregore.mauve.moe/).
 
 ## Usage

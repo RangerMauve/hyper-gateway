@@ -3,46 +3,18 @@
   "version": "2.2.0",
   "description": "A gateway for talking to hypercore-protocol using the same URL structures as Agregore",
   "main": "src/index.js",
+  "type": "module",
   "bin": {
     "hyper-gateway": "src/bin.js"
   },
   "scripts": {
-    "build": "npm run build-linux && npm run build-windows && npm run build-mac",
+    "build": "npm run bundle-bin && npm run build-linux && npm run build-windows && npm run build-mac",
     "build-linux": "node build.js --target linux",
     "build-mac": "node build.js --target darwin",
     "build-windows": "node build.js --target win32",
+    "bundle-bin": "node bundle-bin.js",
     "lint": "standard --fix",
     "test": "node test"
-  },
-  "pkg-linux": {
-    "targets": [
-      "node14-linux-x64"
-    ],
-    "assets": [
-      "./node_modules/sodium-native/prebuilds/linux-x64/*",
-      "./node_modules/utp-native/prebuilds/linux-x64/*",
-      "./node_modules/better-sqlite3/build/Release/better_sqlite3.node"
-    ]
-  },
-  "pkg-darwin": {
-    "targets": [
-      "node14-macos-x64"
-    ],
-    "assets": [
-      "./node_modules/sodium-native/prebuilds/darwin-x64/*",
-      "./node_modules/utp-native/prebuilds/darwin-x64/*",
-      "./node_modules/better-sqlite3/build/Release/better_sqlite3.node"
-    ]
-  },
-  "pkg-win32": {
-    "targets": [
-      "node14-win-x64"
-    ],
-    "assets": [
-      "./node_modules/sodium-native/prebuilds/win32-x64/*",
-      "./node_modules/utp-native/prebuilds/win32-x64/*",
-      "./node_modules/better-sqlite3/build/Release/better_sqlite3.node"
-    ]
   },
   "repository": {
     "type": "git",
@@ -62,15 +34,15 @@
   "homepage": "https://github.com/RangerMauve/hyper-gateway#readme",
   "dependencies": {
     "env-paths": "^2.2.1",
-    "hyper-sdk": "^3.0.7",
-    "hypercore-fetch": "^8.4.0",
-    "yargs": "^17.0.1"
+    "hyper-sdk": "^4.1.1",
+    "hypercore-fetch": "^9.0.0",
+    "yargs": "^17.6.2"
   },
   "devDependencies": {
+    "esbuild": "^0.17.1",
     "get-port": "^5.1.1",
-    "node-fetch": "^2.6.1",
-    "pkg": "^5.2.1",
-    "standard": "^16.0.3",
-    "tape": "^5.2.2"
+    "pkg": "^5.8.0",
+    "standard": "^17.0.0",
+    "tape": "^5.6.3"
   }
 }

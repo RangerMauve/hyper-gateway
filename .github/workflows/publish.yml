@@ -28,11 +28,15 @@ jobs:
     - name: Setup node
       uses: actions/setup-node@v2
       with:
-        node-version: 14
+        node-version: 18
     - name: Install dependencies
       run: npm install
+    - name: Build bundle
+      run: npm run bundle-bin
     - name: Build
       run: ${{ matrix.to_run }}
+    - name: Delete bundle
+      run: node -e "require('fs').rmSync('./dist/bundle.js')"
     - name: Upload binaries to release
       uses: svenstaro/upload-release-action@v2
       with:

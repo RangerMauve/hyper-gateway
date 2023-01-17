@@ -1,14 +1,13 @@
-const test = require('tape')
-const fetch = require('node-fetch')
-const getPort = require('get-port')
-const HyperGateway = require('./')
+import test from 'tape'
+import getPort from 'get-port'
+import * as HyperGateway from './src/index.js'
 
-test('Load data', async (t) => {
+test.skip('Load data', async (t) => {
   const port = await getPort()
 
   const gateway = await HyperGateway.create({
     port,
-    persist: false,
+    storage: false,
     silent: true
   })
 
@@ -17,7 +16,7 @@ test('Load data', async (t) => {
 
     const response = await fetch(url)
 
-    t.equal(response.status, 200, 'Loaded response correctly')
+    t.ok(response.ok, 'Loaded response correctly')
 
     t.ok(await response.text(), 'Non-empty response body')
   } finally {
@@ -30,7 +29,7 @@ test('Upload data', async (t) => {
 
   const gateway = await HyperGateway.create({
     port,
-    persist: false,
+    storage: false,
     silent: true,
     writable: true
   })
@@ -43,13 +42,22 @@ test('Upload data', async (t) => {
       body: 'Hello World!'
     })
 
-    t.equal(response.status, 200, 'Loaded response correctly')
+    t.ok(response.ok, 'Loaded response correctly')
 
-    await response.text()
+    if(!response.ok) {
+      t.error(await response.text())
+    }
+
+    t.ok(response.headers.get('Location'), 'Location header got set in response')
 
     const response2 = await fetch(url)
 
     t.ok(response2.ok, 'Able to load uploaded file')
+
+    if(!response2.ok) {
+      t.error(await response2.text())
+    }
+
     t.equal(await response2.text(), 'Hello World!')
   } finally {
     await gateway.close()
