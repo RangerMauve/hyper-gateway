@@ -44,13 +44,20 @@ test('Upload data', async (t) => {
 
     t.ok(response.ok, 'Loaded response correctly')
 
-    await response.text()
+    if(!response.ok) {
+      t.error(await response.text())
+    }
 
     t.ok(response.headers.get('Location'), 'Location header got set in response')
 
     const response2 = await fetch(url)
 
     t.ok(response2.ok, 'Able to load uploaded file')
+
+    if(!response2.ok) {
+      t.error(await response2.text())
+    }
+
     t.equal(await response2.text(), 'Hello World!')
   } finally {
     await gateway.close()
