@@ -60,7 +60,10 @@ export async function create ({
       const response = await fetch(finalURL, {
         method,
         headers,
-        body
+        body,
+        // Required to do requests with ReadableStream bodies
+        // Breaks in Node 18.13+
+        duplex: 'half'
       })
 
       const responseHeaders = {}
