@@ -16,7 +16,7 @@ test.skip('Load data', async (t) => {
 
     const response = await fetch(url)
 
-    t.equal(response.status, 200, 'Loaded response correctly')
+    t.ok(response.ok, 'Loaded response correctly')
 
     t.ok(await response.text(), 'Non-empty response body')
   } finally {
@@ -42,9 +42,11 @@ test('Upload data', async (t) => {
       body: 'Hello World!'
     })
 
-    t.equal(response.status, 200, 'Loaded response correctly')
+    t.ok(response.ok, 'Loaded response correctly')
 
     await response.text()
+
+    t.ok(response.headers.get('Location'), 'Location header got set in response')
 
     const response2 = await fetch(url)
 
