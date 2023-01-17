@@ -1,0 +1,15 @@
+{
+ "pkg": {
+  "targets": [
+    "node18-win-x64"
+  ],
+  "assets": [
+    "./node_modules/simdle-universal/native/prebuilds/win32-x64/*",
+    "./node_modules/quickbit-universal/native/prebuilds/win32-x64/*",
+    "./node_modules/fs-native-extensions/prebuilds/win32-x64/*",
+    "./node_modules/sodium-native/prebuilds/win32-x64/*",
+    "./node_modules/crc-universal/native/prebuilds/win32-x64/*",
+    "./node_modules/udx-native/prebuilds/win32-x64/*"
+  ]
+  }
+}
