@@ -35,7 +35,22 @@ test('Upload data', async (t) => {
   })
 
   try {
-    const url = `http://localhost:${port}/hyper/example/example.txt`
+    const domain = `http://localhost:${port}/hyper`
+    const createURL = `${domain}/localhost/?key=example`
+
+    const createResponse = await fetch(createURL, {
+      method: 'post'
+    })
+
+    if (!createResponse.ok) {
+      const message = await createResponse.text()
+      t.fail(`Unable to create: ${createResponse.status}: ${message}`)
+    }
+
+    const hyperURL = await createResponse.text()
+    const rootURL = hyperURL.replace('hyper://', domain + '/')
+
+    const url = `${rootURL}/example.txt`
 
     const response = await fetch(url, {
       method: 'PUT',
@@ -44,7 +59,7 @@ test('Upload data', async (t) => {
 
     t.ok(response.ok, 'Loaded response correctly')
 
-    if(!response.ok) {
+    if (!response.ok) {
       t.error(await response.text())
     }
 
@@ -54,7 +69,7 @@ test('Upload data', async (t) => {
 
     t.ok(response2.ok, 'Able to load uploaded file')
 
-    if(!response2.ok) {
+    if (!response2.ok) {
       t.error(await response2.text())
     }
 
