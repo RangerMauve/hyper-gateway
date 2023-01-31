@@ -35,7 +35,7 @@
   "dependencies": {
     "env-paths": "^2.2.1",
     "hyper-sdk": "^4.1.1",
-    "hypercore-fetch": "^9.0.5",
+    "hypercore-fetch": "^9.0.6",
     "yargs": "^17.6.2"
   },
   "devDependencies": {
