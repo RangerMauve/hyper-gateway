@@ -50,3 +50,29 @@ Hyper-gateway uses the [pkg](https://github.com/vercel/pkg) module to compile th
 - `npm install`
 - `npm run build`
 - Look in the `dist` folder for the platform you want.
+
+## FAQ
+
+### How to run hyper-gateway as a background process?
+
+```
+# Paste this into an interactive bash or zsh shell, or save it as a file and run it with sh.
+
+# This will create the service file.
+cat << EOF > ~/.local/share/systemd/user/hyper-gateway.service
+[Unit]
+Description=hypercore-protocol gateway daemon (for hyperdrive)
+Documentation=https://github.com/RangerMauve/hyper-gateway
+
+[Service]
+Type=exec
+ExecStart=%h/.local/bin/hyper-gateway --writable true --silent true run
+EOF
+
+chmod 644 ~/.local/share/systemd/user/hyper-gateway.service
+
+systemctl --user daemon-reload
+systemctl --user enable hyper-gateway.service
+systemctl --user start hyper-gateway.service
+systemctl --user status hyper-gateway.service
+```
