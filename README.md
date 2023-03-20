@@ -53,6 +53,23 @@ Hyper-gateway uses the [pkg](https://github.com/vercel/pkg) module to compile th
 
 ## FAQ
 
+### How do I install hyper-gateway?
+
+Download the [latest
+release](https://github.com/RangerMauve/hyper-gateway/releases/) for
+your operating system, move it to your PATH, and make it executable.
+
+On GNU/Linux systems, you can use:
+
+```
+# Paste this into an interactive bash or zsh shell, or save it as a file and run it with sh.
+
+mkdir -p ~/.local/bin/
+cd ~/.local/bin/
+curl -Lo hyper-gateway https://github.com/RangerMauve/hyper-gateway/releases/latest/download/hyper-gateway-linux
+chmod 744 hyper-gateway
+```
+
 ### How to run hyper-gateway as a background process?
 
 ```
