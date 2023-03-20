@@ -70,7 +70,7 @@ curl -Lo hyper-gateway https://github.com/RangerMauve/hyper-gateway/releases/lat
 chmod 744 hyper-gateway
 ```
 
-### How to run hyper-gateway as a background process?
+### How do I run hyper-gateway as a background process on GNU/Linux + SystemD?
 
 ```
 # Paste this into an interactive bash or zsh shell, or save it as a file and run it with sh.
