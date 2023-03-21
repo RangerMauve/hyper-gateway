@@ -30,10 +30,20 @@ function runOptions (yargs) {
       type: 'boolean',
       default: false
     })
+    .option('subdomain', {
+      describe: 'Enable serving `example-com.gateway.com/path` as `gateway.com/hyper/example.com/path`',
+      type: 'boolean',
+      default: false
+    })
+    .option('subdomain-redirect', {
+      describe: 'Redirect `gateway.com/hyper/domain.here/path` to `domain-here.gateway.com/path`',
+      type: 'boolean',
+      default: false
+    })
 }
 
 async function runServer (args) {
-  const { writable, port, persist, storageLocation, silent } = args
+  const { writable, port, persist, storageLocation, silent, subdomain, subdomainRedirect } = args
 
   const storage = persist ? storageLocation : false
 
@@ -41,7 +51,9 @@ async function runServer (args) {
     writable,
     port,
     silent,
-    storage
+    storage,
+    subdomain,
+    subdomainRedirect
   })
 
   process.on('SIGINT', async () => {
