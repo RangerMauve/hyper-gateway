@@ -46,7 +46,7 @@ Basically you can replace the `hyper://` in a URL with `http://localhost:4973/hy
 
 ## Subdomain / Subdomain-Redirect
 
-When serving contents on a gateway, some sites may be using absolute URLs (e.g. `/scrtipt.js`) which can get messed up when the data is being served from `/hyper/key_here/`.
+When serving contents on a gateway, some sites may be using absolute URLs (e.g. `/script.js`) which can be messed up when the data is being served from a subdomain (e.g. `http://some-gateway.com/hyper/key_here/`).
 
 In order to account for this you can add the `--subdomain` flag which is based on the [IPFS Subdomain Gateway Spec](https://github.com/ipfs/specs/blob/main/http-gateways/SUBDOMAIN_GATEWAY.md), but applied to hyper.
 
