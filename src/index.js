@@ -17,6 +17,8 @@ const EPHEMERAL_METHODS = [
 
 const HYPER_PREFIX = 'hyper://'
 
+const SUBDOMAIN_KEY_LENGTH = 52
+
 export async function create ({
   port,
   serverOpts = {
@@ -59,15 +61,12 @@ export async function create ({
           if (segments.length > 2) {
             isSubdomained = true
 
-            if (subdomain.length === 52) {
+            if (subdomain.length === SUBDOMAIN_KEY_LENGTH) {
               // Likely a hypercore key
               finalURL = HYPER_PREFIX + subdomain + url
             } else if (subdomain.includes('-')) {
             // Likely an escaped subdomain
-              const unescaped = subdomain
-                .split('--')
-                .map((section) => section.replaceAll('-', '.'))
-                .join('-')
+              const unescaped = unescapeSubdomain(subdomain)
 
               finalURL = HYPER_PREFIX + unescaped + url
             }
@@ -89,8 +88,8 @@ export async function create ({
         // Take the host from the URL and redirect to the subdomain
           const host = headers.host
           const [hyperHost, ...pathSegments] = finalURL.slice(HYPER_PREFIX.length).split('/')
-          const subdomainName = hyperHost.replaceAll('-', '--').replaceAll('.', '-')
-          const redirectURL = `//${subdomainName}.${host}${pathSegments.join('/') || '/'}`
+          const subdomainName = escapeSubdomain(hyperHost)
+          const redirectURL = `://${subdomainName}.${host}${pathSegments.join('/') || '/'}`
 
           res.writeHead(301, {
             Location: redirectURL
@@ -149,4 +148,15 @@ export async function create ({
   }
 
   return { sdk, server, close }
+}
+
+function escapeSubdomain (subdomain) {
+  return subdomain.replaceAll('-', '--').replaceAll('.', '-')
+}
+
+function unescapeSubdomain (subdomain) {
+  return subdomain
+    .split('--')
+    .map((section) => section.replaceAll('-', '.'))
+    .join('-')
 }

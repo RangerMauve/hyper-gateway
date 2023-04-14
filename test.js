@@ -12,11 +12,12 @@ test('Load data', async (t) => {
   })
 
   try {
-    const url = `http://localhost:${port}/hyper/example2.mauve.moe/`
+    const url = `http://localhost:${port}/hyper/blog.mauve.moe/`
 
     const response = await fetch(url)
 
-    t.ok(response.ok, 'Loaded response correctly')
+    await checkOk(response, 'Loaded data from network', t)
+
     t.ok(await response.text(), 'Non-empty response body')
   } finally {
     await gateway.close()
@@ -44,7 +45,7 @@ test('Subdomain redirect', async (t) => {
     })
 
     t.equal(response.status, 301, 'Got redirect')
-    t.equal(response.headers.get('Location'), '//example2-mauve-moe.example.com/', 'Got expected subdomain in redirect')
+    t.equal(response.headers.get('Location'), '://example2-mauve-moe.example.com/', 'Got expected subdomain in redirect')
     t.notOk(await response.text(), 'Empty response body')
   } finally {
     await gateway.close()
@@ -67,11 +68,12 @@ test('Subdomain serve', async (t) => {
     const response = await fetch(url, {
       redirect: 'manual',
       headers: {
-        Host: 'example2-mauve-moe.example.com'
+        Host: 'blog-mauve-moe.example.com'
       }
     })
 
-    t.ok(response.ok, 'Able to load')
+    await checkOk(response, 'Able to load', t)
+
     t.ok(await response.text(), 'Non-Empty response body')
   } finally {
     await gateway.close()
@@ -96,10 +98,7 @@ test('Upload data', async (t) => {
       method: 'post'
     })
 
-    if (!createResponse.ok) {
-      const message = await createResponse.text()
-      t.fail(`Unable to create: ${createResponse.status}: ${message}`)
-    }
+    await checkOk(createResponse, 'Created drive', t)
 
     const hyperURL = await createResponse.text()
     const rootURL = hyperURL.replace('hyper://', domain + '/')
@@ -111,24 +110,25 @@ test('Upload data', async (t) => {
       body: 'Hello World!'
     })
 
-    t.ok(response.ok, 'Loaded response correctly')
-
-    if (!response.ok) {
-      t.error(await response.text())
-    }
+    await checkOk(response, 'Loaded response correctly', t)
 
     t.ok(response.headers.get('Location'), 'Location header got set in response')
 
     const response2 = await fetch(url)
 
-    t.ok(response2.ok, 'Able to load uploaded file')
-
-    if (!response2.ok) {
-      t.error(await response2.text())
-    }
+    await checkOk(response2, 'Able to load uploaded file', t)
 
     t.equal(await response2.text(), 'Hello World!')
   } finally {
     await gateway.close()
   }
 })
+
+async function checkOk (response, message, t) {
+  if (!response.ok) {
+    t.error(
+      new Error(message + ' ' + await response.text()),
+      message
+    )
+  } else t.pass(message)
+}
