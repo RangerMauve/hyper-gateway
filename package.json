@@ -1,6 +1,6 @@
 {
   "name": "hyper-gateway",
-  "version": "3.2.1",
+  "version": "3.3.0",
   "description": "A gateway for talking to hypercore-protocol using the same URL structures as Agregore",
   "main": "src/index.js",
   "type": "module",
