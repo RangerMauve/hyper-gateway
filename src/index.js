@@ -15,6 +15,10 @@ const EPHEMERAL_METHODS = [
   'options'
 ]
 
+const HYPER_PREFIX = 'hyper://'
+
+const SUBDOMAIN_KEY_LENGTH = 52
+
 export async function create ({
   port,
   serverOpts = {
@@ -23,7 +27,9 @@ export async function create ({
   hyperOpts = {},
   writable = false,
   silent = false,
-  storage = DEFAULT_STORAGE
+  storage = DEFAULT_STORAGE,
+  subdomain = false,
+  subdomainRedirect = false
 } = {}) {
   const debug = silent ? makeDebug('hyper-gateway') : log
 
@@ -44,14 +50,53 @@ export async function create ({
       const { method, url, headers } = req
       debug('Request: %O', { method, url, headers })
 
-      // TODO: Show something at the root?
-      if (!url.startsWith('/hyper/')) {
-        res.writeHead(404)
-        res.end('Not Found')
-        return
+      let finalURL = null
+      let isSubdomained = false
+
+      if (subdomain || subdomainRedirect) {
+        const { host } = headers
+        if (host) {
+          const segments = host.split('.')
+          const [subdomain] = segments
+          if (segments.length > 2) {
+            isSubdomained = true
+
+            if (subdomain.length === SUBDOMAIN_KEY_LENGTH) {
+              // Likely a hypercore key
+              finalURL = HYPER_PREFIX + subdomain + url
+            } else if (subdomain.includes('-')) {
+            // Likely an escaped subdomain
+              const unescaped = unescapeSubdomain(subdomain)
+
+              finalURL = HYPER_PREFIX + unescaped + url
+            }
+          }
+        }
       }
 
-      const finalURL = 'hyper://' + url.slice('/hyper/'.length)
+      if (!finalURL) {
+        // TODO: Show something at the root?
+        if (!url.startsWith('/hyper/')) {
+          res.writeHead(404)
+          res.end('Not Found')
+          return
+        }
+
+        finalURL = HYPER_PREFIX + url.slice('/hyper/'.length)
+
+        if (subdomainRedirect && !isSubdomained) {
+        // Take the host from the URL and redirect to the subdomain
+          const host = headers.host
+          const [hyperHost, ...pathSegments] = finalURL.slice(HYPER_PREFIX.length).split('/')
+          const subdomainName = escapeSubdomain(hyperHost)
+          const redirectURL = `://${subdomainName}.${host}${pathSegments.join('/') || '/'}`
+
+          res.writeHead(301, {
+            Location: redirectURL
+          }).end('')
+          return
+        }
+      }
 
       const isEphemeral = EPHEMERAL_METHODS.includes(method.toLowerCase())
 
@@ -103,4 +148,15 @@ export async function create ({
   }
 
   return { sdk, server, close }
+}
+
+function escapeSubdomain (subdomain) {
+  return subdomain.replaceAll('-', '--').replaceAll('.', '-')
+}
+
+function unescapeSubdomain (subdomain) {
+  return subdomain
+    .split('--')
+    .map((section) => section.replaceAll('-', '.'))
+    .join('-')
 }
