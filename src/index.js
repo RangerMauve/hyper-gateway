@@ -5,6 +5,10 @@ import { Readable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import makeDebug from 'debug'
 
+import {SERVER_INFO} from './version.js'
+
+const SERVER_INFO_STRING = JSON.stringify(SERVER_INFO, null, '\t')
+
 const log = (...args) => console.log(...args)
 
 const DEFAULT_STORAGE = 'hyper-gateway'
@@ -76,7 +80,12 @@ export async function create ({
 
       if (!finalURL) {
         // TODO: Show something at the root?
-        if (!url.startsWith('/hyper/')) {
+        if (url === '/') {
+          res.writeHead(200, {
+            'Content-Type': 'application/json'
+          })
+          res.end(SERVER_INFO_STRING)
+        } else if (!url.startsWith('/hyper/')) {
           res.writeHead(404)
           res.end('Not Found')
           return

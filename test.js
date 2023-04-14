@@ -124,6 +124,31 @@ test('Upload data', async (t) => {
   }
 })
 
+test.only('Get version from root', async (t) => {
+  const port = await getPort()
+
+  const gateway = await HyperGateway.create({
+    port,
+    storage: false,
+    silent: true,
+    writable: true
+  })
+
+  try {
+    const domain = `http://localhost:${port}/`
+    const infoResponse = await fetch(domain)
+
+    await checkOk(infoResponse, 'Got info about server', t)
+
+    const info = await infoResponse.json()
+
+    t.ok(info?.version, 'Has version')
+    t.ok(info?.dependencies, 'Has dependencies')
+  } finally {
+    await gateway.close()
+  }
+})
+
 async function checkOk (response, message, t) {
   if (!response.ok) {
     t.error(

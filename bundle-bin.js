@@ -3,6 +3,8 @@ import * as esbuild from 'esbuild'
 import fs from 'node:fs'
 import url from 'node:url'
 
+import './generate-version.js'
+
 const nativePlugin = {
   name: 'native-import',
   setup (build) {
