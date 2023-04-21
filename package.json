@@ -13,6 +13,7 @@
     "build-mac": "node build.js --target darwin",
     "build-windows": "node build.js --target win32",
     "bundle-bin": "node bundle-bin.js",
+    "update-deps": "npm i --save hypercore-fetch@latest hyper-sdk@latest",
     "postversion": "node generate-version.js",
     "postinstall": "node generate-version.js",
     "lint": "standard --fix",
@@ -36,8 +37,8 @@
   "homepage": "https://github.com/RangerMauve/hyper-gateway#readme",
   "dependencies": {
     "env-paths": "^2.2.1",
-    "hyper-sdk": "^4.2.3",
-    "hypercore-fetch": "^9.4.0",
+    "hyper-sdk": "^4.2.4",
+    "hypercore-fetch": "^9.5.0",
     "yargs": "^17.6.2"
   },
   "devDependencies": {
