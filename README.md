@@ -104,7 +104,6 @@ EOF
 chmod 644 ~/.local/share/systemd/user/hyper-gateway.service
 
 systemctl --user daemon-reload
-systemctl --user enable hyper-gateway.service
 systemctl --user start hyper-gateway.service
 systemctl --user status hyper-gateway.service
 ```
