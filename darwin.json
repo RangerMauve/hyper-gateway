@@ -9,7 +9,9 @@
     "./node_modules/fs-native-extensions/prebuilds/darwin-x64/*",
     "./node_modules/sodium-native/prebuilds/darwin-x64/*",
     "./node_modules/crc-universal/native/prebuilds/darwin-x64/*",
-    "./node_modules/udx-native/prebuilds/darwin-x64/*"
+    "./node_modules/udx-native/prebuilds/darwin-x64/*",
+    "./package.json" 
+
   ]
   }
 }

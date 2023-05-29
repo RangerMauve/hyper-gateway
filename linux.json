@@ -9,7 +9,8 @@
     "./node_modules/fs-native-extensions/prebuilds/linux-x64/*",
     "./node_modules/sodium-native/prebuilds/linux-x64/*",
     "./node_modules/crc-universal/native/prebuilds/linux-x64/*",
-    "./node_modules/udx-native/prebuilds/linux-x64/*"
+    "./node_modules/udx-native/prebuilds/linux-x64/*",
+    "./package.json"
   ]
   }
 }
