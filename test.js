@@ -124,7 +124,7 @@ test('Upload data', async (t) => {
   }
 })
 
-test.only('Get version from root', async (t) => {
+test('Get version from root', async (t) => {
   const port = await getPort()
 
   const gateway = await HyperGateway.create({
