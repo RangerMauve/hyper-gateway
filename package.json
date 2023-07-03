@@ -37,8 +37,8 @@
   "homepage": "https://github.com/RangerMauve/hyper-gateway#readme",
   "dependencies": {
     "env-paths": "^2.2.1",
-    "hyper-sdk": "^4.2.4",
-    "hypercore-fetch": "^9.6.0",
+    "hyper-sdk": "^4.3.0",
+    "hypercore-fetch": "^9.7.0",
     "yargs": "^17.6.2"
   },
   "devDependencies": {
