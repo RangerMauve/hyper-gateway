@@ -91,6 +91,7 @@ chmod 744 hyper-gateway
 # Paste this into an interactive bash or zsh shell, or save it as a file and run it with sh.
 
 # This will create the service file.
+mkdir -p ~/.local/share/systemd/user/
 cat << EOF > ~/.local/share/systemd/user/hyper-gateway.service
 [Unit]
 Description=hypercore-protocol gateway daemon (for hyperdrive)
