@@ -85,6 +85,7 @@ export async function create ({
             'Content-Type': 'application/json'
           })
           res.end(SERVER_INFO_STRING)
+          return
         } else if (!url.startsWith('/hyper/')) {
           res.writeHead(404)
           res.end('Not Found')
@@ -147,6 +148,8 @@ export async function create ({
       else resolve()
     })
   })
+
+  debug('Ready!')
 
   async function close () {
     await Promise.all([
