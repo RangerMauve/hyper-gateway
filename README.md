@@ -28,7 +28,7 @@ chmod 744 hyper-gateway
 ## Usage
 
 ```
-hyper-gateway run
+hyper-gateway run --writable true
 ```
 
 Options: `hyper-gateway --help run`
