@@ -2,14 +2,33 @@
 
 A gateway for talking to hypercore-protocol using the same URL structures as [Agregore](https://agregore.mauve.moe/).
 
-## Usage
+## Installation
+
+If you are familiar with `npm`, you can use:
 
 ```
 npm i -g hyper-gateway
 ```
 
+Alternatively, you can download the [latest Github
+release](https://github.com/RangerMauve/hyper-gateway/releases/) for
+your operating system, move it to your PATH, and make it executable.
+
+The following commands will do this on GNU/Linux systems:
+
 ```
-hyper-gateway run
+# Paste this into an interactive bash or zsh shell, or save it as a file and run it with sh.
+
+mkdir -p ~/.local/bin/
+cd ~/.local/bin/
+curl -Lo hyper-gateway https://github.com/RangerMauve/hyper-gateway/releases/latest/download/hyper-gateway-linux
+chmod 744 hyper-gateway
+```
+
+## Usage
+
+```
+hyper-gateway run --writable true
 ```
 
 Options: `hyper-gateway --help run`
@@ -67,23 +86,6 @@ Hyper-gateway uses the [pkg](https://github.com/vercel/pkg) module to compile th
 - Look in the `dist` folder for the platform you want.
 
 ## FAQ
-
-### How do I install hyper-gateway?
-
-Download the [latest
-release](https://github.com/RangerMauve/hyper-gateway/releases/) for
-your operating system, move it to your PATH, and make it executable.
-
-On GNU/Linux systems, you can use:
-
-```
-# Paste this into an interactive bash or zsh shell, or save it as a file and run it with sh.
-
-mkdir -p ~/.local/bin/
-cd ~/.local/bin/
-curl -Lo hyper-gateway https://github.com/RangerMauve/hyper-gateway/releases/latest/download/hyper-gateway-linux
-chmod 744 hyper-gateway
-```
 
 ### How do I run hyper-gateway as a background process on GNU/Linux + SystemD?
 
